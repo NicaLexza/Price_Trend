@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { 
   Grid, 
   Paper, 
@@ -24,11 +24,27 @@ import TrendLineChart from "./TrendLineChart";
 import { fetchTrends, fetchAnalysis, fetchComparison } from "../api/api";
 
 function Dashboard({ foods, regions }) {
+  // Group foods by category for comparison section
+  const groupedFoods = useMemo(() => {
+    const groups = {};
+    foods.forEach(food => {
+      const categoryName = food.category_name || "Uncategorized";
+      if (!groups[categoryName]) {
+        groups[categoryName] = [];
+      }
+      groups[categoryName].push(food);
+    });
+    // Sort categories alphabetically and foods within each category
+    return Object.keys(groups).sort().reduce((acc, key) => {
+      acc[key] = groups[key].sort((a, b) => a.food_name.localeCompare(b.food_name));
+      return acc;
+    }, {});
+  }, [foods]);
   const [filters, setFilters] = useState({
     food: "",
     region: "",
-    startYear: 2018,
-    endYear: 2023,
+    startYear: 2023,
+    endYear: 2025,
   });
 
   const [trendData, setTrendData] = useState([]);
@@ -649,13 +665,23 @@ useEffect(() => {
                             SelectProps={{
                               native: true,
                             }}
-                          sx={{ bgcolor: "white" }}
+                          sx={{ 
+                            bgcolor: "white",
+                            minWidth: "200px",
+                            "& .MuiInputBase-root": {
+                              minWidth: "200px"
+                            }
+                          }}
                           >
-                            <option value="">Select Food</option>
-                            {foods.map((f) => (
-                              <option key={f.food_id} value={f.food_id}>
-                                {f.food_name}
-                              </option>
+                            <option value=""></option>
+                            {Object.entries(groupedFoods).map(([categoryName, categoryFoods]) => (
+                              <optgroup key={categoryName} label={categoryName}>
+                                {categoryFoods.map((f) => (
+                                  <option key={f.food_id} value={f.food_id}>
+                                    {f.food_name}
+                                  </option>
+                                ))}
+                              </optgroup>
                             ))}
                           </TextField>
                           <TextField
@@ -667,9 +693,15 @@ useEffect(() => {
                             SelectProps={{
                               native: true,
                             }}
-                          sx={{ bgcolor: "white" }}
+                          sx={{ 
+                            bgcolor: "white",
+                            minWidth: "200px",
+                            "& .MuiInputBase-root": {
+                              minWidth: "200px"
+                            }
+                          }}
                           >
-                            <option value="">Select Region</option>
+                            <option value=""></option>
                             {regions.map((r) => (
                               <option key={r.region_id} value={r.region_id}>
                                 {r.region_name}
@@ -714,13 +746,23 @@ useEffect(() => {
                             SelectProps={{
                               native: true,
                             }}
-                          sx={{ bgcolor: "white" }}
+                          sx={{ 
+                            bgcolor: "white",
+                            minWidth: "200px",
+                            "& .MuiInputBase-root": {
+                              minWidth: "200px"
+                            }
+                          }}
                           >
-                            <option value="">Select Food</option>
-                            {foods.map((f) => (
-                              <option key={f.food_id} value={f.food_id}>
-                                {f.food_name}
-                              </option>
+                            <option value=""></option>
+                            {Object.entries(groupedFoods).map(([categoryName, categoryFoods]) => (
+                              <optgroup key={categoryName} label={categoryName}>
+                                {categoryFoods.map((f) => (
+                                  <option key={f.food_id} value={f.food_id}>
+                                    {f.food_name}
+                                  </option>
+                                ))}
+                              </optgroup>
                             ))}
                           </TextField>
                           <TextField
@@ -732,9 +774,15 @@ useEffect(() => {
                             SelectProps={{
                               native: true,
                             }}
-                          sx={{ bgcolor: "white" }}
+                          sx={{ 
+                            bgcolor: "white",
+                            minWidth: "200px",
+                            "& .MuiInputBase-root": {
+                              minWidth: "200px"
+                            }
+                          }}
                           >
-                            <option value="">Select Region</option>
+                            <option value=""></option>
                             {regions.map((r) => (
                               <option key={r.region_id} value={r.region_id}>
                                 {r.region_name}

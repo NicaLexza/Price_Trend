@@ -22,4 +22,16 @@ def get_db():
 
 @router.get("/")
 def list_foods(db: Session = Depends(get_db)):
-    return get_food_items(db)
+    results = get_food_items(db)
+    # Format response to include category information
+    return [
+        {
+            "food_id": food.food_id,
+            "food_name": food.food_name,
+            "unit": food.unit,
+            "category_id": food.category_id,
+            "category_name": category.category_name if category else None,
+            "category_description": category.description if category else None,
+        }
+        for food, category in results
+    ]

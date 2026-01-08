@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from .models import (
     FoodItem,
+    FoodCategory,
     Region,
     PriceObservation,
     TimePeriod,
@@ -11,7 +13,15 @@ from datetime import datetime
 
 
 def get_food_items(db: Session):
-    return db.query(FoodItem).all()
+    return (
+        db.query(FoodItem, FoodCategory)
+        .outerjoin(FoodCategory, FoodItem.category_id == FoodCategory.category_id)
+        .order_by(
+            func.coalesce(FoodCategory.category_name, 'ZZZ'),
+            FoodItem.food_name
+        )
+        .all()
+    )
 
 
 def get_regions(db: Session):
@@ -33,17 +43,33 @@ def get_price_trends(
     start_year: int,
     end_year: int
 ):
-    return (
+    """
+    Get price trends for a specific food item and region within a year range.
+    Returns results ordered chronologically by year and month.
+    """
+    results = (
         db.query(PriceObservation, TimePeriod)
-        .join(TimePeriod)
+        .join(TimePeriod, PriceObservation.time_id == TimePeriod.time_id)
         .filter(
             PriceObservation.food_id == food_id,
             PriceObservation.region_id == region_id,
-            TimePeriod.year.between(start_year, end_year),
+            TimePeriod.year >= start_year,
+            TimePeriod.year <= end_year,
         )
         .order_by(TimePeriod.year, TimePeriod.month)
         .all()
     )
+    
+    # Debug: Log the query results to verify filtering
+    if results:
+        first_obs, first_time = results[0]
+        last_obs, last_time = results[-1]
+        print(f"DEBUG: get_price_trends - food_id={food_id}, region_id={region_id}, "
+              f"found {len(results)} records from {first_time.year}-{first_time.month} "
+              f"to {last_time.year}-{last_time.month}, "
+              f"first_price={first_obs.price_value}, last_price={last_obs.price_value}")
+    
+    return results
 
 
 def create_ai_insight(db: Session, food_id: int, region_id: int, time_id, insight_text: str):

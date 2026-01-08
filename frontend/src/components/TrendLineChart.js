@@ -66,7 +66,7 @@ function TrendLineChart({ data, forecast = [] }) {
       <Typography variant="h6" sx={{ mb: 2 }}>
         Inflation Trend {forecast && forecast.length > 0 && "(with Forecast)"}
       </Typography>
-      <Box sx={{ width: "100%", height: 400 }}>
+      <Box sx={{ width: "100%", height: { xs: 350, sm: 450, md: 500 } }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={formattedData}
@@ -83,8 +83,11 @@ function TrendLineChart({ data, forecast = [] }) {
             <YAxis
               tick={{ fontSize: 10 }}
               domain={[minPrice - padding, maxPrice + padding]}
+              tickFormatter={(value) => value.toFixed(1)}
             />
-            <Tooltip />
+            <Tooltip 
+              formatter={(value) => value != null ? value.toFixed(1) : ''}
+            />
             <Legend />
             {/* Historical data line */}
             <Line

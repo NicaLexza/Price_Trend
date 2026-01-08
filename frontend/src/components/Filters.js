@@ -1,8 +1,25 @@
-import React from "react";
-import { Grid, TextField, MenuItem, Paper, Typography, Box } from "@mui/material";
+import React, { useMemo } from "react";
+import { Grid, TextField, MenuItem, ListSubheader, Paper, Typography, Box } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
 function Filters({ foods, regions, filters, setFilters }) {
+  // Group foods by category
+  const groupedFoods = useMemo(() => {
+    const groups = {};
+    foods.forEach(food => {
+      const categoryName = food.category_name || "Uncategorized";
+      if (!groups[categoryName]) {
+        groups[categoryName] = [];
+      }
+      groups[categoryName].push(food);
+    });
+    // Sort categories alphabetically
+    return Object.keys(groups).sort().reduce((acc, key) => {
+      acc[key] = groups[key].sort((a, b) => a.food_name.localeCompare(b.food_name));
+      return acc;
+    }, {});
+  }, [foods]);
+
   return (
     <Paper 
       elevation={1} 
@@ -28,13 +45,24 @@ function Filters({ foods, regions, filters, setFilters }) {
             variant="outlined"
             value={filters.food}
             onChange={e => setFilters({ ...filters, food: e.target.value })}
-            sx={{ bgcolor: "white" }}
+            sx={{ 
+              bgcolor: "white",
+              minWidth: "200px",
+              "& .MuiInputBase-root": {
+                minWidth: "200px"
+              }
+            }}
           >
-            {foods.map(food => (
-              <MenuItem key={food.food_id} value={food.food_id}>
-                {food.food_name}
-              </MenuItem>
-            ))}
+            {Object.entries(groupedFoods).map(([categoryName, categoryFoods]) => [
+              <ListSubheader key={categoryName} sx={{ fontWeight: 700, bgcolor: "#f5f5f5" }}>
+                {categoryName}
+              </ListSubheader>,
+              ...categoryFoods.map(food => (
+                <MenuItem key={food.food_id} value={food.food_id} sx={{ pl: 3 }}>
+                  {food.food_name}
+                </MenuItem>
+              ))
+            ])}
           </TextField>
         </Grid>
 
@@ -46,7 +74,13 @@ function Filters({ foods, regions, filters, setFilters }) {
             variant="outlined"
             value={filters.region}
             onChange={e => setFilters({ ...filters, region: e.target.value })}
-            sx={{ bgcolor: "white" }}
+            sx={{ 
+              bgcolor: "white",
+              minWidth: "200px",
+              "& .MuiInputBase-root": {
+                minWidth: "200px"
+              }
+            }}
           >
             {regions.map(region => (
               <MenuItem key={region.region_id} value={region.region_id}>
