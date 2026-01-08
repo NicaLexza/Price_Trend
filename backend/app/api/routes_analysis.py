@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, Depends, Query
 
 from ..database import SessionLocal
@@ -222,8 +223,8 @@ def analyze(
 
 @router.get("/saved")
 def list_saved_insights(
-    food_id: int | None = None,
-    region_id: int | None = None,
+    food_id: Optional[int] = None,
+    region_id: Optional[int] = None,
     db=Depends(get_db),
 ):
     insights = get_ai_insights(db, food_id, region_id)
@@ -240,8 +241,8 @@ def list_saved_insights(
 
 @router.get("/forecasts")
 def list_saved_forecasts(
-    food_id: int | None = None,
-    region_id: int | None = None,
+    food_id: Optional[int] = None,
+    region_id: Optional[int] = None,
     db=Depends(get_db),
 ):
     forecasts = get_forecast_results(db, food_id, region_id)

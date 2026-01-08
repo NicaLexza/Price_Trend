@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from "recharts";
-import { Paper, Typography } from "@mui/material";
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer } from "recharts";
+import { Typography, Box } from "@mui/material";
 
 function TrendLineChart({ data, forecast = [] }) {
   // Build a more detailed x-axis label like "2021-01", "2021-02", ...
@@ -62,59 +62,59 @@ function TrendLineChart({ data, forecast = [] }) {
   const padding = (maxPrice - minPrice) * 0.1 || 1;
 
   return (
-    <Paper sx={{ p: 2 }}>
-      <Typography variant="h6" sx={{ mb: 1 }}>
+    <>
+      <Typography variant="h6" sx={{ mb: 2 }}>
         Inflation Trend {forecast && forecast.length > 0 && "(with Forecast)"}
       </Typography>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <LineChart
-          width={900}
-          height={400}
-          data={formattedData}
-          margin={{ top: 10, right: 20, left: 0, bottom: 40 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="label"
-            angle={-45}
-            textAnchor="end"
-            height={60}
-            tick={{ fontSize: 10 }}
-          />
-          <YAxis
-            tick={{ fontSize: 10 }}
-            domain={[minPrice - padding, maxPrice + padding]}
-          />
-          <Tooltip />
-          <Legend />
-          {/* Historical data line */}
-          <Line
-            type="monotone"
-            dataKey="price"
-            stroke="#1976d2"
-            strokeWidth={2}
-            dot={{ r: 2 }}
-            activeDot={{ r: 4 }}
-            name="Historical Price"
-            connectNulls={false}
-          />
-          {/* Forecast line */}
-          {forecast && forecast.length > 0 && (
+      <Box sx={{ width: "100%", height: 400 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={formattedData}
+            margin={{ top: 10, right: 20, left: 20, bottom: 60 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="label"
+              angle={-45}
+              textAnchor="end"
+              height={60}
+              tick={{ fontSize: 10 }}
+            />
+            <YAxis
+              tick={{ fontSize: 10 }}
+              domain={[minPrice - padding, maxPrice + padding]}
+            />
+            <Tooltip />
+            <Legend />
+            {/* Historical data line */}
             <Line
               type="monotone"
-              dataKey="forecast"
-              stroke="#ff9800"
+              dataKey="price"
+              stroke="#1976d2"
               strokeWidth={2}
-              strokeDasharray="5 5"
-              dot={{ r: 3, fill: "#ff9800" }}
-              activeDot={{ r: 5 }}
-              name="Forecast"
+              dot={{ r: 2 }}
+              activeDot={{ r: 4 }}
+              name="Historical Price"
               connectNulls={false}
             />
-          )}
-        </LineChart>
-      </div>
-    </Paper>
+            {/* Forecast line */}
+            {forecast && forecast.length > 0 && (
+              <Line
+                type="monotone"
+                dataKey="forecast"
+                stroke="#ff9800"
+                strokeWidth={2}
+                strokeDasharray="5 5"
+                dot={{ r: 3, fill: "#ff9800" }}
+                activeDot={{ r: 5 }}
+                name="Forecast"
+                connectNulls={false}
+              />
+            )}
+          </LineChart>
+        </ResponsiveContainer>
+      </Box>
+    </>
   );
 }
 

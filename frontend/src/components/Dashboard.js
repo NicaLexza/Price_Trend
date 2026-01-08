@@ -41,7 +41,6 @@ function Dashboard({ foods, regions }) {
 
   
   // Comparison state
-  const [comparisonMode, setComparisonMode] = useState(false);
   const [comparisonFilters, setComparisonFilters] = useState({
     food_1: "",
     region_1: "",
@@ -119,10 +118,8 @@ useEffect(() => {
     />
       </Box>
 
-    <Grid container spacing={3}>
         {/* Chart Section */}
-      <Grid item xs={12}>
-          <Card elevation={2} sx={{ borderRadius: 2 }}>
+      <Card elevation={2} sx={{ borderRadius: 2, mb: 3 }}>
             <CardContent sx={{ p: 3 }}>
               {trendLoading && (
                 <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
@@ -140,34 +137,48 @@ useEffect(() => {
               )}
             </CardContent>
           </Card>
-      </Grid>
 
         {/* Key Metrics Section */}
         {analysis?.stats && (
-      <Grid item xs={12}>
-            <Card elevation={2} sx={{ borderRadius: 2 }}>
-              <CardContent sx={{ p: 3 }}>
-                <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
+        <Card elevation={2} sx={{ borderRadius: 3, mb: 3, overflow: "hidden" }}>
+          <CardContent sx={{ p: 4 }}>
+            <Typography variant="h5" sx={{ fontWeight: 700, mb: 4, color: "#1a237e" }}>
                   Key Metrics
                 </Typography>
-                <Grid container spacing={2}>
+            <Grid container spacing={3}>
                   <Grid item xs={12} sm={6} md={3}>
-                    <Card variant="outlined" sx={{ height: "100%", bgcolor: "#f5f5f5" }}>
-                      <CardContent>
-                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+                <Card 
+                  variant="outlined" 
+                  sx={{ 
+                    height: "100%", 
+                    bgcolor: "linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%)",
+                    background: "linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%)",
+                    display: "flex", 
+                    flexDirection: "column",
+                    borderRadius: 2,
+                    border: "1px solid #e0e0e0",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      boxShadow: 4,
+                      transform: "translateY(-2px)",
+                    }
+                  }}
+                >
+                  <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", p: 2.5 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                             Current Price
                           </Typography>
-                          <Tooltip title="The latest price in the selected time period">
-                            <IconButton size="small">
+                      <Tooltip title="The latest price in the selected time period" arrow>
+                        <IconButton size="small" sx={{ color: "#1976d2" }}>
                               <InfoIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
                         </Box>
-                        <Typography variant="h5" sx={{ fontWeight: 700, color: "#1976d2" }}>
+                    <Typography variant="h4" sx={{ fontWeight: 700, color: "#1976d2", mb: 0.5, lineHeight: 1.2 }}>
                           PHP {analysis.stats.end_price?.toFixed(2) || "-"}
                         </Typography>
-                        <Typography variant="caption" color="text.secondary">
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem", mt: 1 }}>
                           {analysis.stats.period_end_label || "-"}
                         </Typography>
                       </CardContent>
@@ -175,83 +186,145 @@ useEffect(() => {
                   </Grid>
                   
                   <Grid item xs={12} sm={6} md={3}>
-                    <Card variant="outlined" sx={{ height: "100%", bgcolor: "#f5f5f5" }}>
-                      <CardContent>
-                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+                <Card 
+                  variant="outlined" 
+                  sx={{ 
+                    height: "100%", 
+                    bgcolor: (analysis.stats.absolute_change || 0) >= 0 ? "linear-gradient(135deg, #ffebee 0%, #ffffff 100%)" : "linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%)",
+                    background: (analysis.stats.absolute_change || 0) >= 0 ? "linear-gradient(135deg, #ffebee 0%, #ffffff 100%)" : "linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%)",
+                    display: "flex", 
+                    flexDirection: "column",
+                    borderRadius: 2,
+                    border: `1px solid ${(analysis.stats.absolute_change || 0) >= 0 ? "#ffcdd2" : "#c8e6c9"}`,
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      boxShadow: 4,
+                      transform: "translateY(-2px)",
+                    }
+                  }}
+                >
+                  <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", p: 2.5 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                             Change Over Period
                           </Typography>
-                          <Tooltip title="Total price change from the first month to the last month in your selected period">
-                            <IconButton size="small">
+                      <Tooltip title="Total price change from the first month to the last month in your selected period" arrow>
+                        <IconButton size="small" sx={{ color: (analysis.stats.absolute_change || 0) >= 0 ? "#d32f2f" : "#2e7d32" }}>
                               <InfoIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
                         </Box>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
                           {(analysis.stats.absolute_change || 0) >= 0 ? (
-                            <TrendingUpIcon sx={{ color: "#d32f2f" }} />
-                          ) : (
-                            <TrendingDownIcon sx={{ color: "#2e7d32" }} />
-                          )}
+                        <TrendingUpIcon sx={{ color: "#d32f2f", fontSize: 32 }} />
+                      ) : (
+                        <TrendingDownIcon sx={{ color: "#2e7d32", fontSize: 32 }} />
+                      )}
+                      <Box>
+                        <Typography 
+                          variant="h4" 
+                          sx={{ 
+                            fontWeight: 700,
+                            color: (analysis.stats.absolute_change || 0) >= 0 ? "#d32f2f" : "#2e7d32",
+                            lineHeight: 1.2
+                          }}
+                        >
+                          {(analysis.stats.absolute_change || 0) >= 0 ? "+" : ""}
+                          {analysis.stats.absolute_change?.toFixed(2) || "-"} PHP
+                        </Typography>
+                        {analysis.stats.percent_change != null && (
                           <Typography 
-                            variant="h5" 
+                            variant="body2" 
                             sx={{ 
-                              fontWeight: 700,
-                              color: (analysis.stats.absolute_change || 0) >= 0 ? "#d32f2f" : "#2e7d32"
+                              fontWeight: 600,
+                              color: (analysis.stats.percent_change || 0) >= 0 ? "#d32f2f" : "#2e7d32",
+                              mt: 0.5
                             }}
                           >
-                            {(analysis.stats.absolute_change || 0) >= 0 ? "+" : ""}
-                            {analysis.stats.absolute_change?.toFixed(2) || "-"} PHP
+                            {(analysis.stats.percent_change || 0) >= 0 ? "+" : ""}
+                            {analysis.stats.percent_change.toFixed(1)}%
                           </Typography>
+                        )}
+                      </Box>
                         </Box>
-                        <Typography variant="caption" color="text.secondary">
-                          {analysis.stats.percent_change != null
-                            ? `${(analysis.stats.percent_change || 0) >= 0 ? "+" : ""}${analysis.stats.percent_change.toFixed(1)}%`
-                            : "-"}
-                        </Typography>
                       </CardContent>
                     </Card>
                   </Grid>
                   
                   <Grid item xs={12} sm={6} md={3}>
-                    <Card variant="outlined" sx={{ height: "100%", bgcolor: "#f5f5f5" }}>
-                      <CardContent>
-                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+                <Card 
+                  variant="outlined" 
+                  sx={{ 
+                    height: "100%", 
+                    bgcolor: "linear-gradient(135deg, #fff3e0 0%, #ffffff 100%)",
+                    background: "linear-gradient(135deg, #fff3e0 0%, #ffffff 100%)",
+                    display: "flex", 
+                    flexDirection: "column",
+                    borderRadius: 2,
+                    border: "1px solid #ffe0b2",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      boxShadow: 4,
+                      transform: "translateY(-2px)",
+                    }
+                  }}
+                >
+                  <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", p: 2.5 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                             Avg Monthly Change
                           </Typography>
-                          <Tooltip title="Average increase or decrease per month during the selected period">
-                            <IconButton size="small">
+                      <Tooltip title="Average increase or decrease per month during the selected period" arrow>
+                        <IconButton size="small" sx={{ color: "#f57c00" }}>
                               <InfoIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
                         </Box>
-                        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                    <Typography variant="h4" sx={{ fontWeight: 700, color: "#f57c00", mb: 0.5, lineHeight: 1.2 }}>
                           {(analysis.stats.avg_monthly_change || 0) >= 0 ? "+" : ""}
-                          {analysis.stats.avg_monthly_change?.toFixed(2) || "-"} PHP/month
+                      {analysis.stats.avg_monthly_change?.toFixed(2) || "-"}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem", mt: 1 }}>
+                      PHP per month
                         </Typography>
                       </CardContent>
                     </Card>
                   </Grid>
                   
                   <Grid item xs={12} sm={6} md={3}>
-                    <Card variant="outlined" sx={{ height: "100%", bgcolor: "#f5f5f5" }}>
-                      <CardContent>
-                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
-                          <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+                <Card 
+                  variant="outlined" 
+                  sx={{ 
+                    height: "100%", 
+                    bgcolor: (analysis.stats.spike_count || 0) > 0 ? "linear-gradient(135deg, #fce4ec 0%, #ffffff 100%)" : "linear-gradient(135deg, #f1f8e9 0%, #ffffff 100%)",
+                    background: (analysis.stats.spike_count || 0) > 0 ? "linear-gradient(135deg, #fce4ec 0%, #ffffff 100%)" : "linear-gradient(135deg, #f1f8e9 0%, #ffffff 100%)",
+                    display: "flex", 
+                    flexDirection: "column",
+                    borderRadius: 2,
+                    border: `1px solid ${(analysis.stats.spike_count || 0) > 0 ? "#f8bbd0" : "#dcedc8"}`,
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      boxShadow: 4,
+                      transform: "translateY(-2px)",
+                    }
+                  }}
+                >
+                  <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", p: 2.5 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                             Price Spikes
                           </Typography>
-                          <Tooltip title="Number of months with sudden price jumps (more than 20% increase compared to previous month)">
-                            <IconButton size="small">
+                      <Tooltip title="Number of months with sudden price jumps (more than 20% increase compared to previous month)" arrow>
+                        <IconButton size="small" sx={{ color: (analysis.stats.spike_count || 0) > 0 ? "#c2185b" : "#558b2f" }}>
                               <InfoIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
                         </Box>
-                        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                    <Typography variant="h4" sx={{ fontWeight: 700, color: (analysis.stats.spike_count || 0) > 0 ? "#c2185b" : "#558b2f", mb: 0.5, lineHeight: 1.2 }}>
                           {analysis.stats.spike_count || 0}
                         </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {(analysis.stats.spike_count || 0) === 0 ? "No major spikes" : "spike(s) detected"}
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem", mt: 1 }}>
+                      {(analysis.stats.spike_count || 0) === 0 ? "No major spikes detected" : "spike(s) detected"}
                         </Typography>
                       </CardContent>
                     </Card>
@@ -259,77 +332,124 @@ useEffect(() => {
                 </Grid>
               </CardContent>
             </Card>
-          </Grid>
         )}
 
         {/* Additional Insights Section */}
         {analysis?.stats && (
-          <Grid item xs={12}>
-            <Card elevation={2} sx={{ borderRadius: 2 }}>
-              <CardContent sx={{ p: 3 }}>
-                <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
+        <Card elevation={2} sx={{ borderRadius: 3, mb: 3, overflow: "hidden" }}>
+          <CardContent sx={{ p: 4 }}>
+            <Typography variant="h5" sx={{ fontWeight: 700, mb: 4, color: "#1a237e" }}>
                   Additional Insights
                 </Typography>
-                <Grid container spacing={2}>
-                  {analysis.stats.yoy_inflation != null && (
-                    <Grid item xs={12} md={4}>
+            <Grid container spacing={3} sx={{ width: "100%" }}>
+              <Grid item xs={12} md={4} sx={{ display: "flex", width: "100%" }}>
                       <Card 
                         variant="outlined" 
                         sx={{ 
                           height: "100%",
-                          bgcolor: analysis.stats.yoy_inflation > 5 ? "#ffebee" : 
-                                   analysis.stats.yoy_inflation > 0 ? "#fff3e0" : "#e8f5e9",
-                          border: `2px solid ${analysis.stats.yoy_inflation > 5 ? "#c62828" : 
-                                                      analysis.stats.yoy_inflation > 0 ? "#e65100" : "#2e7d32"}`
-                        }}
-                      >
-                        <CardContent>
-                          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                              Year-on-Year Inflation
-                            </Typography>
-                            <Tooltip title="Compares the latest month's price to the same month last year. This shows how much prices have changed over the past 12 months.">
-                              <IconButton size="small">
-                                <InfoIcon fontSize="small" />
-                              </IconButton>
-                            </Tooltip>
-                          </Box>
+                      width: "100%",
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      borderRadius: 2,
+                      bgcolor: analysis.stats.yoy_inflation != null && analysis.stats.yoy_inflation > 5 ? "linear-gradient(135deg, #ffebee 0%, #ffffff 100%)" : 
+                               analysis.stats.yoy_inflation != null && analysis.stats.yoy_inflation > 0 ? "linear-gradient(135deg, #fff3e0 0%, #ffffff 100%)" : 
+                               analysis.stats.yoy_inflation != null ? "linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%)" : "#fafafa",
+                      background: analysis.stats.yoy_inflation != null && analysis.stats.yoy_inflation > 5 ? "linear-gradient(135deg, #ffebee 0%, #ffffff 100%)" : 
+                                  analysis.stats.yoy_inflation != null && analysis.stats.yoy_inflation > 0 ? "linear-gradient(135deg, #fff3e0 0%, #ffffff 100%)" : 
+                                  analysis.stats.yoy_inflation != null ? "linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%)" : "#fafafa",
+                      border: `2px solid ${analysis.stats.yoy_inflation != null && analysis.stats.yoy_inflation > 5 ? "#c62828" : 
+                                              analysis.stats.yoy_inflation != null && analysis.stats.yoy_inflation > 0 ? "#e65100" : 
+                                              analysis.stats.yoy_inflation != null ? "#2e7d32" : "#e0e0e0"}`,
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        boxShadow: 4,
+                        transform: "translateY(-2px)",
+                      }
+                    }}
+                  >
+                    <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", p: 3 }}>
+                      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 700, fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                          Year-on-Year Inflation
+                        </Typography>
+                        <Tooltip title="Compares the latest month's price to the same month last year. This shows how much prices have changed over the past 12 months." arrow>
+                          <IconButton size="small" sx={{ color: analysis.stats.yoy_inflation != null && analysis.stats.yoy_inflation > 5 ? "#c62828" : analysis.stats.yoy_inflation != null && analysis.stats.yoy_inflation > 0 ? "#e65100" : "#2e7d32" }}>
+                            <InfoIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                      {analysis.stats.yoy_inflation != null ? (
+                        <>
                           <Typography 
-                            variant="h4" 
+                            variant="h3" 
                             sx={{ 
-                              fontWeight: 700,
+                              fontWeight: 800,
                               color: analysis.stats.yoy_inflation > 5 ? "#c62828" : 
-                                     analysis.stats.yoy_inflation > 0 ? "#e65100" : "#2e7d32"
+                                     analysis.stats.yoy_inflation > 0 ? "#e65100" : "#2e7d32",
+                              mb: 1,
+                              lineHeight: 1.2
                             }}
                           >
                             {analysis.stats.yoy_inflation >= 0 ? "+" : ""}
                             {analysis.stats.yoy_inflation.toFixed(1)}%
                           </Typography>
-                          <Typography variant="caption" color="text.secondary">
+                          <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.875rem", mt: 1 }}>
                             vs {analysis.stats.yoy_label}
                           </Typography>
-                        </CardContent>
-                      </Card>
-                    </Grid>
-                  )}
-                  
-                  <Grid item xs={12} md={analysis.stats.yoy_inflation != null ? 4 : 6}>
-                    <Card variant="outlined" sx={{ height: "100%" }}>
-                      <CardContent>
-                        <Typography variant="body2" sx={{ fontWeight: 600, mb: 2 }}>
-                          Price Range
+                        </>
+                      ) : (
+                        <Typography variant="h6" color="text.secondary" sx={{ fontSize: "1rem", mt: 1 }}>
+                          Not available
                         </Typography>
-                        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                          <Box>
-                            <Typography variant="caption" color="text.secondary">Lowest</Typography>
-                            <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                              PHP {analysis.stats.min_price?.toFixed(2) || "-"} ({analysis.stats.min_price_label || "-"})
+                      )}
+                    </CardContent>
+                  </Card>
+                </Grid>
+                  
+              <Grid item xs={12} md={4} sx={{ display: "flex", width: "100%" }}>
+                <Card 
+                  variant="outlined" 
+                  sx={{ 
+                    height: "100%",
+                    width: "100%",
+                    flex: 1, 
+                    display: "flex", 
+                    flexDirection: "column",
+                    borderRadius: 2,
+                    border: "1px solid #e0e0e0",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      boxShadow: 4,
+                      transform: "translateY(-2px)",
+                    }
+                  }}
+                >
+                  <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", p: 3 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 700, mb: 3, fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.5px", color: "text.secondary" }}>
+                          Price Range
+                    </Typography>
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+                      <Box sx={{ p: 2, bgcolor: "#e3f2fd", borderRadius: 1.5 }}>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                          Lowest Price
+                        </Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 700, color: "#1976d2", mt: 0.5 }}>
+                          PHP {analysis.stats.min_price?.toFixed(2) || "-"}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem", mt: 0.5, display: "block" }}>
+                          {analysis.stats.min_price_label || "-"}
                             </Typography>
                           </Box>
-                          <Box>
-                            <Typography variant="caption" color="text.secondary">Highest</Typography>
-                            <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                              PHP {analysis.stats.max_price?.toFixed(2) || "-"} ({analysis.stats.max_price_label || "-"})
+                      <Box sx={{ p: 2, bgcolor: "#ffebee", borderRadius: 1.5 }}>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                          Highest Price
+                        </Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 700, color: "#d32f2f", mt: 0.5 }}>
+                          PHP {analysis.stats.max_price?.toFixed(2) || "-"}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.7rem", mt: 0.5, display: "block" }}>
+                          {analysis.stats.max_price_label || "-"}
                             </Typography>
                           </Box>
                         </Box>
@@ -337,19 +457,37 @@ useEffect(() => {
                     </Card>
                   </Grid>
                   
-                  <Grid item xs={12} md={analysis.stats.yoy_inflation != null ? 4 : 6}>
-                    <Card 
-                      variant="outlined" 
-                      sx={{ 
-                        height: "100%",
-                        bgcolor: analysis.stats.price_position === "near_record_high" ? "#ffebee" : 
-                                 analysis.stats.price_position === "high" ? "#fff3e0" : 
-                                 analysis.stats.price_position === "low" ? "#e3f2fd" : 
-                                 analysis.stats.price_position === "near_record_low" ? "#e8f5e9" : "#f5f5f5"
-                      }}
-                    >
-                      <CardContent>
-                        <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
+              <Grid item xs={12} md={4} sx={{ display: "flex", width: "100%" }}>
+                <Card 
+                  variant="outlined" 
+                  sx={{ 
+                    height: "100%",
+                    width: "100%",
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    borderRadius: 2,
+                    bgcolor: analysis.stats.price_position === "near_record_high" ? "linear-gradient(135deg, #ffebee 0%, #ffffff 100%)" :
+                             analysis.stats.price_position === "high" ? "linear-gradient(135deg, #fff3e0 0%, #ffffff 100%)" : 
+                             analysis.stats.price_position === "low" ? "linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%)" : 
+                             analysis.stats.price_position === "near_record_low" ? "linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%)" : "#fafafa",
+                    background: analysis.stats.price_position === "near_record_high" ? "linear-gradient(135deg, #ffebee 0%, #ffffff 100%)" : 
+                                analysis.stats.price_position === "high" ? "linear-gradient(135deg, #fff3e0 0%, #ffffff 100%)" : 
+                                analysis.stats.price_position === "low" ? "linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%)" : 
+                                analysis.stats.price_position === "near_record_low" ? "linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%)" : "#fafafa",
+                    border: `1px solid ${analysis.stats.price_position === "near_record_high" ? "#ffcdd2" : 
+                                        analysis.stats.price_position === "high" ? "#ffe0b2" : 
+                                        analysis.stats.price_position === "low" ? "#bbdefb" : 
+                                        analysis.stats.price_position === "near_record_low" ? "#c8e6c9" : "#e0e0e0"}`,
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      boxShadow: 4,
+                      transform: "translateY(-2px)",
+                    }
+                  }}
+                >
+                  <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", p: 3, justifyContent: "center" }}>
+                    <Typography variant="body2" sx={{ fontWeight: 700, mb: 2, fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.5px", color: "text.secondary" }}>
                           Current Position
                         </Typography>
                         <Chip 
@@ -360,9 +498,18 @@ useEffect(() => {
                             analysis.stats.price_position === "low" ? "info" :
                             analysis.stats.price_position === "near_record_low" ? "success" : "default"
                           }
-                          sx={{ fontWeight: 600, fontSize: "0.9rem", mb: 1 }}
-                        />
-                        <Typography variant="caption" color="text.secondary">
+                      sx={{ 
+                        fontWeight: 700, 
+                        fontSize: "1rem", 
+                        mb: 1.5,
+                        py: 2.5,
+                        height: "auto",
+                        "& .MuiChip-label": {
+                          px: 2
+                        }
+                      }}
+                    />
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem" }}>
                           Relative to period range
                         </Typography>
                       </CardContent>
@@ -371,47 +518,71 @@ useEffect(() => {
                 </Grid>
               </CardContent>
             </Card>
-          </Grid>
         )}
 
         {/* Summary Section */}
         {analysis && !analysis.error && (
-          <Grid item xs={12}>
-            <Card elevation={2} sx={{ borderRadius: 2, bgcolor: "#f8f9fa" }}>
-              <CardContent sx={{ p: 3 }}>
-                <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
+        <Card elevation={2} sx={{ borderRadius: 3, bgcolor: "linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)", background: "linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)", mb: 3, overflow: "hidden" }}>
+          <CardContent sx={{ p: 4 }}>
+            <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: "#1a237e" }}>
                   Summary
                 </Typography>
-                <Typography variant="body1" sx={{ lineHeight: 1.8, fontSize: "1.05rem" }}>
+            <Box sx={{ 
+              p: 3, 
+              bgcolor: "white", 
+              borderRadius: 2, 
+              border: "1px solid #e0e0e0",
+              mb: analysis.forecast && analysis.forecast.length > 0 ? 3 : 0
+            }}>
+              <Typography variant="body1" sx={{ lineHeight: 1.9, fontSize: "1.05rem", color: "#424242" }}>
                   {analysis.summary || analysis.insight}
+              </Typography>
+            </Box>
+            {analysis.forecast && analysis.forecast.length > 0 && (
+              <Box sx={{ mt: 3, pt: 3, borderTop: "2px solid #e0e0e0" }}>
+                <Typography variant="body2" sx={{ mb: 2.5, fontWeight: 600, fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.5px", color: "text.secondary" }}>
+                  Forecast (Next {analysis.forecast.length} months)
                 </Typography>
-                {analysis.forecast && analysis.forecast.length > 0 && (
-                  <Box sx={{ mt: 2, pt: 2, borderTop: "1px solid #e0e0e0" }}>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      Forecast (Next {analysis.forecast.length} months):
-                    </Typography>
-                    <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                      {analysis.forecast.map((price, idx) => (
+                <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
+                  {analysis.forecast.map((price, idx) => {
+                    const monthNumber = idx + 1;
+                    const monthLabel = monthNumber === 1 ? "1st" : 
+                                      monthNumber === 2 ? "2nd" : 
+                                      monthNumber === 3 ? "3rd" : 
+                                      `${monthNumber}th`;
+                    return (
+                      <Box key={idx} sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0.5 }}>
                         <Chip 
-                          key={idx}
                           label={`PHP ${price.toFixed(2)}`}
-                          size="small"
+                          size="medium"
                           color="primary"
-                          variant="outlined"
+                          variant="filled"
+                          sx={{ 
+                            fontWeight: 600,
+                            fontSize: "0.875rem",
+                            py: 2,
+                            height: "auto",
+                            "& .MuiChip-label": {
+                              px: 2
+                            }
+                          }}
                         />
-                      ))}
+                        <Typography variant="caption" sx={{ fontSize: "0.7rem", fontWeight: 600, color: "text.secondary" }}>
+                          {monthLabel} Month
+                        </Typography>
+                      </Box>
+                    );
+                  })}
                     </Box>
                   </Box>
                 )}
               </CardContent>
             </Card>
-          </Grid>
         )}
 
         {/* Loading/Error States */}
         {analysisLoading && (
-          <Grid item xs={12}>
-            <Card>
+        <Card sx={{ mb: 3 }}>
               <CardContent sx={{ textAlign: "center", p: 4 }}>
                 <CircularProgress />
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
@@ -419,53 +590,56 @@ useEffect(() => {
                 </Typography>
               </CardContent>
             </Card>
-          </Grid>
         )}
         
         {analysisError && (
-          <Grid item xs={12}>
-            <Alert severity="error">{analysisError}</Alert>
-          </Grid>
+        <Alert severity="error" sx={{ mb: 3 }}>{analysisError}</Alert>
         )}
 
         {!analysis && !analysisLoading && !analysisError && filters.food && filters.region && (
-          <Grid item xs={12}>
-            <Alert severity="info">
+        <Alert severity="info" sx={{ mb: 3 }}>
               Select filters and view the trend to generate analysis.
             </Alert>
-          </Grid>
         )}
 
         {/* Comparison Section */}
-        <Grid item xs={12}>
-          <Card elevation={2} sx={{ borderRadius: 2 }}>
-            <CardContent sx={{ p: 3 }}>
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <CompareArrowsIcon sx={{ color: "#1976d2" }} />
-                  <Typography variant="h5" sx={{ fontWeight: 600 }}>
+      <Card elevation={2} sx={{ borderRadius: 3, overflow: "hidden" }}>
+        <CardContent sx={{ p: 4 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 4 }}>
+            <CompareArrowsIcon sx={{ color: "#1976d2", fontSize: 32 }} />
+            <Typography variant="h5" sx={{ fontWeight: 700, color: "#1a237e" }}>
                     Compare Products or Regions
                   </Typography>
-                </Box>
-                <Button 
-                  variant={comparisonMode ? "contained" : "outlined"}
-                  startIcon={<CompareArrowsIcon />}
-                  onClick={() => setComparisonMode(!comparisonMode)}
-                >
-                  {comparisonMode ? "Hide Comparison" : "Show Comparison"}
-                </Button>
               </Box>
             
-            {comparisonMode && (
-              <>
-                <Grid container spacing={2} sx={{ mb: 3 }}>
-                  <Grid item xs={12} md={6}>
-                    <Card variant="outlined" sx={{ bgcolor: "#f8f9fa" }}>
-                      <CardContent>
-                        <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+          <>
+              <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
+                <Grid container spacing={3} sx={{ maxWidth: "1000px" }}>
+                  <Grid item xs={12} md={6} sx={{ display: "flex" }}>
+                  <Card 
+                    variant="outlined" 
+                    sx={{ 
+                      bgcolor: "linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%)",
+                      background: "linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%)",
+                      borderRadius: 2,
+                      border: "2px solid #1976d2",
+                      transition: "all 0.3s ease",
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "100%",
+                      "&:hover": {
+                        boxShadow: 4,
+                      }
+                    }}
+                  >
+                    <CardContent sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", flexGrow: 1 }}>
+                      <Box sx={{ minHeight: "60px", display: "flex", alignItems: "center", justifyContent: "center", mb: 3, width: "100%" }}>
+                        <Typography variant="h6" sx={{ fontWeight: 700, color: "#1976d2", display: "flex", alignItems: "center", gap: 1, justifyContent: "center", textAlign: "center" }}>
+                          <Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: "#1976d2" }} />
                           Item 1
                         </Typography>
-                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                      </Box>
+                      <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, width: "100%", maxWidth: "400px" }}>
                           <TextField
                             select
                             label="Food Item"
@@ -475,6 +649,7 @@ useEffect(() => {
                             SelectProps={{
                               native: true,
                             }}
+                          sx={{ bgcolor: "white" }}
                           >
                             <option value="">Select Food</option>
                             {foods.map((f) => (
@@ -492,6 +667,7 @@ useEffect(() => {
                             SelectProps={{
                               native: true,
                             }}
+                          sx={{ bgcolor: "white" }}
                           >
                             <option value="">Select Region</option>
                             {regions.map((r) => (
@@ -504,13 +680,31 @@ useEffect(() => {
                       </CardContent>
                     </Card>
                   </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Card variant="outlined" sx={{ bgcolor: "#f8f9fa" }}>
-                      <CardContent>
-                        <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                <Grid item xs={12} md={6} sx={{ display: "flex" }}>
+                  <Card 
+                    variant="outlined" 
+                    sx={{ 
+                      bgcolor: "linear-gradient(135deg, #ffebee 0%, #ffffff 100%)",
+                      background: "linear-gradient(135deg, #ffebee 0%, #ffffff 100%)",
+                      borderRadius: 2,
+                      border: "2px solid #d32f2f",
+                      transition: "all 0.3s ease",
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "100%",
+                      "&:hover": {
+                        boxShadow: 4,
+                      }
+                    }}
+                  >
+                    <CardContent sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", flexGrow: 1 }}>
+                      <Box sx={{ minHeight: "60px", display: "flex", alignItems: "center", justifyContent: "center", mb: 3, width: "100%" }}>
+                        <Typography variant="h6" sx={{ fontWeight: 700, color: "#d32f2f", display: "flex", alignItems: "center", gap: 1, justifyContent: "center", textAlign: "center" }}>
+                          <Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: "#d32f2f" }} />
                           Item 2
                         </Typography>
-                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                      </Box>
+                      <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, width: "100%", maxWidth: "400px" }}>
                           <TextField
                             select
                             label="Food Item"
@@ -520,6 +714,7 @@ useEffect(() => {
                             SelectProps={{
                               native: true,
                             }}
+                          sx={{ bgcolor: "white" }}
                           >
                             <option value="">Select Food</option>
                             {foods.map((f) => (
@@ -537,6 +732,7 @@ useEffect(() => {
                             SelectProps={{
                               native: true,
                             }}
+                          sx={{ bgcolor: "white" }}
                           >
                             <option value="">Select Region</option>
                             {regions.map((r) => (
@@ -550,8 +746,9 @@ useEffect(() => {
                     </Card>
                   </Grid>
                 </Grid>
+              </Box>
                 
-                <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+              <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
                   <Button
                     variant="contained"
                     size="large"
@@ -576,6 +773,14 @@ useEffect(() => {
                     }}
                     disabled={!comparisonFilters.food_1 || !comparisonFilters.region_1 || 
                              !comparisonFilters.food_2 || !comparisonFilters.region_2}
+                  sx={{
+                    fontWeight: 700,
+                    textTransform: "none",
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: 2,
+                    fontSize: "1rem"
+                  }}
                   >
                     Compare
                   </Button>
@@ -591,48 +796,90 @@ useEffect(() => {
                 )}
                 
                 {comparisonData && !comparisonError && (
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <Card variant="outlined" sx={{ border: "2px solid #1976d2", height: "100%" }}>
-                        <CardContent>
-                          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: "#1976d2" }}>
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <Grid container spacing={3} sx={{ maxWidth: "1000px" }}>
+                    <Grid item xs={12} md={6} sx={{ display: "flex", justifyContent: "center" }}>
+                    <Card 
+                      variant="outlined" 
+                      sx={{ 
+                        border: "2px solid #1976d2", 
+                        height: "100%",
+                        borderRadius: 2,
+                        bgcolor: "linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%)",
+                        background: "linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%)",
+                        transition: "all 0.3s ease",
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                        maxWidth: "450px",
+                        minWidth: "450px",
+                        "&:hover": {
+                          boxShadow: 6,
+                        }
+                      }}
+                    >
+                      <CardContent sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", flexGrow: 1 }}>
+                        <Box sx={{ height: "80px", display: "flex", alignItems: "center", justifyContent: "center", mb: 3, width: "100%", px: 2 }}>
+                          <Typography 
+                            variant="h6" 
+                            sx={{ 
+                              fontWeight: 700, 
+                              color: "#1976d2", 
+                              fontSize: "1.1rem", 
+                              textAlign: "center",
+                              wordBreak: "break-word",
+                              overflowWrap: "break-word",
+                              lineHeight: 1.3
+                            }}
+                          >
                             {comparisonData.item_1.food_name} - {comparisonData.item_1.region_name}
                           </Typography>
+                        </Box>
                           {comparisonData.item_1.stats && (
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                              <Box>
-                                <Typography variant="caption" color="text.secondary">Current Price</Typography>
-                                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                          <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, width: "100%", maxWidth: "400px" }}>
+                            <Box sx={{ p: 2, bgcolor: "white", borderRadius: 1.5, textAlign: "center" }}>
+                              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                                Current Price
+                              </Typography>
+                              <Typography variant="h5" sx={{ fontWeight: 700, color: "#1976d2", mt: 0.5 }}>
                                   PHP {comparisonData.item_1.stats.end_price.toFixed(2)}
                                 </Typography>
                               </Box>
                               <Divider />
-                              <Box>
-                                <Typography variant="caption" color="text.secondary">Change</Typography>
-                                <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                            <Box sx={{ p: 2, bgcolor: "white", borderRadius: 1.5, textAlign: "center" }}>
+                              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                                Change Over Period
+                              </Typography>
+                              <Typography variant="body1" sx={{ fontWeight: 700, mt: 0.5, color: comparisonData.item_1.stats.absolute_change >= 0 ? "#d32f2f" : "#2e7d32" }}>
                                   {comparisonData.item_1.stats.absolute_change >= 0 ? "+" : ""}
                                   {comparisonData.item_1.stats.absolute_change.toFixed(2)} PHP ({comparisonData.item_1.stats.percent_change?.toFixed(1)}%)
                                 </Typography>
                               </Box>
-                              <Box>
-                                <Typography variant="caption" color="text.secondary">Avg Monthly Change</Typography>
-                                <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                            <Box sx={{ p: 2, bgcolor: "white", borderRadius: 1.5, textAlign: "center" }}>
+                              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                                Avg Monthly Change
+                              </Typography>
+                              <Typography variant="body1" sx={{ fontWeight: 700, mt: 0.5 }}>
                                   {comparisonData.item_1.stats.avg_monthly_change >= 0 ? "+" : ""}
                                   {comparisonData.item_1.stats.avg_monthly_change.toFixed(2)} PHP/month
                                 </Typography>
                               </Box>
                               {comparisonData.item_1.stats.yoy_inflation != null && (
-                                <Box>
-                                  <Typography variant="caption" color="text.secondary">YoY Inflation</Typography>
-                                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                              <Box sx={{ p: 2, bgcolor: "white", borderRadius: 1.5, textAlign: "center" }}>
+                                <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                                  YoY Inflation
+                                </Typography>
+                                <Typography variant="body1" sx={{ fontWeight: 700, mt: 0.5, color: comparisonData.item_1.stats.yoy_inflation >= 0 ? "#d32f2f" : "#2e7d32" }}>
                                     {comparisonData.item_1.stats.yoy_inflation >= 0 ? "+" : ""}
                                     {comparisonData.item_1.stats.yoy_inflation.toFixed(1)}%
                                   </Typography>
                                 </Box>
                               )}
-                              <Box>
-                                <Typography variant="caption" color="text.secondary">Price Range</Typography>
-                                <Typography variant="body2">
+                            <Box sx={{ p: 2, bgcolor: "white", borderRadius: 1.5, textAlign: "center" }}>
+                              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                                Price Range
+                              </Typography>
+                              <Typography variant="body2" sx={{ mt: 0.5, fontWeight: 500 }}>
                                   PHP {comparisonData.item_1.stats.min_price.toFixed(2)} - PHP {comparisonData.item_1.stats.max_price.toFixed(2)}
                                 </Typography>
                               </Box>
@@ -641,47 +888,88 @@ useEffect(() => {
                         </CardContent>
                       </Card>
                     </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Card variant="outlined" sx={{ border: "2px solid #d32f2f", height: "100%" }}>
-                        <CardContent>
-                          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: "#d32f2f" }}>
+                  <Grid item xs={12} md={6} sx={{ display: "flex", justifyContent: "center" }}>
+                    <Card 
+                      variant="outlined" 
+                      sx={{ 
+                        border: "2px solid #d32f2f", 
+                        height: "100%",
+                        borderRadius: 2,
+                        bgcolor: "linear-gradient(135deg, #ffebee 0%, #ffffff 100%)",
+                        background: "linear-gradient(135deg, #ffebee 0%, #ffffff 100%)",
+                        transition: "all 0.3s ease",
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                        maxWidth: "450px",
+                        minWidth: "450px",
+                        "&:hover": {
+                          boxShadow: 6,
+                        }
+                      }}
+                    >
+                        <CardContent sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", flexGrow: 1 }}>
+                          <Box sx={{ height: "80px", display: "flex", alignItems: "center", justifyContent: "center", mb: 3, width: "100%", px: 2 }}>
+                            <Typography 
+                              variant="h6" 
+                              sx={{ 
+                                fontWeight: 700, 
+                                color: "#d32f2f", 
+                                fontSize: "1.1rem", 
+                                textAlign: "center",
+                                wordBreak: "break-word",
+                                overflowWrap: "break-word",
+                                lineHeight: 1.3
+                              }}
+                            >
                             {comparisonData.item_2.food_name} - {comparisonData.item_2.region_name}
                           </Typography>
+                          </Box>
                           {comparisonData.item_2.stats && (
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                              <Box>
-                                <Typography variant="caption" color="text.secondary">Current Price</Typography>
-                                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                          <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, width: "100%", maxWidth: "400px" }}>
+                            <Box sx={{ p: 2, bgcolor: "white", borderRadius: 1.5, textAlign: "center" }}>
+                              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                                Current Price
+                              </Typography>
+                              <Typography variant="h5" sx={{ fontWeight: 700, color: "#d32f2f", mt: 0.5 }}>
                                   PHP {comparisonData.item_2.stats.end_price.toFixed(2)}
                                 </Typography>
                               </Box>
                               <Divider />
-                              <Box>
-                                <Typography variant="caption" color="text.secondary">Change</Typography>
-                                <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                            <Box sx={{ p: 2, bgcolor: "white", borderRadius: 1.5, textAlign: "center" }}>
+                              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                                Change Over Period
+                              </Typography>
+                              <Typography variant="body1" sx={{ fontWeight: 700, mt: 0.5, color: comparisonData.item_2.stats.absolute_change >= 0 ? "#d32f2f" : "#2e7d32" }}>
                                   {comparisonData.item_2.stats.absolute_change >= 0 ? "+" : ""}
                                   {comparisonData.item_2.stats.absolute_change.toFixed(2)} PHP ({comparisonData.item_2.stats.percent_change?.toFixed(1)}%)
                                 </Typography>
                               </Box>
-                              <Box>
-                                <Typography variant="caption" color="text.secondary">Avg Monthly Change</Typography>
-                                <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                            <Box sx={{ p: 2, bgcolor: "white", borderRadius: 1.5, textAlign: "center" }}>
+                              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                                Avg Monthly Change
+                              </Typography>
+                              <Typography variant="body1" sx={{ fontWeight: 700, mt: 0.5 }}>
                                   {comparisonData.item_2.stats.avg_monthly_change >= 0 ? "+" : ""}
                                   {comparisonData.item_2.stats.avg_monthly_change.toFixed(2)} PHP/month
                                 </Typography>
                               </Box>
                               {comparisonData.item_2.stats.yoy_inflation != null && (
-                                <Box>
-                                  <Typography variant="caption" color="text.secondary">YoY Inflation</Typography>
-                                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                              <Box sx={{ p: 2, bgcolor: "white", borderRadius: 1.5, textAlign: "center" }}>
+                                <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                                  YoY Inflation
+                                </Typography>
+                                <Typography variant="body1" sx={{ fontWeight: 700, mt: 0.5, color: comparisonData.item_2.stats.yoy_inflation >= 0 ? "#d32f2f" : "#2e7d32" }}>
                                     {comparisonData.item_2.stats.yoy_inflation >= 0 ? "+" : ""}
                                     {comparisonData.item_2.stats.yoy_inflation.toFixed(1)}%
                                   </Typography>
                                 </Box>
                               )}
-                              <Box>
-                                <Typography variant="caption" color="text.secondary">Price Range</Typography>
-                                <Typography variant="body2">
+                            <Box sx={{ p: 2, bgcolor: "white", borderRadius: 1.5, textAlign: "center" }}>
+                              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                                Price Range
+                              </Typography>
+                              <Typography variant="body2" sx={{ mt: 0.5, fontWeight: 500 }}>
                                   PHP {comparisonData.item_2.stats.min_price.toFixed(2)} - PHP {comparisonData.item_2.stats.max_price.toFixed(2)}
                                 </Typography>
                               </Box>
@@ -691,13 +979,11 @@ useEffect(() => {
                       </Card>
                     </Grid>
                   </Grid>
+                </Box>
                 )}
               </>
-            )}
           </CardContent>
         </Card>
-      </Grid>
-      </Grid>
     </Box>
 );
 }
